@@ -88,7 +88,7 @@ export default function Analytics() {
             <h2 className="font-semibold text-gray-900 mb-4">Dispositivos</h2>
             <ResponsiveContainer width="100%" height={180}>
               <PieChart>
-                <Pie data={data.by_device} dataKey="clicks" nameKey="label" cx="50%" cy="50%" outerRadius={70} label={({ label }) => label}>
+                <Pie data={data.by_device} dataKey="clicks" nameKey="label" cx="50%" cy="50%" outerRadius={70} label={({ name }) => String(name ?? "")}>
                   {data.by_device.map((_, i) => (
                     <Cell key={i} fill={COLORS[i % COLORS.length]} />
                   ))}
