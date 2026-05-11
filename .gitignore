@@ -25,6 +25,7 @@ infra/.terraform/
 infra/*.tfstate
 infra/*.tfstate.backup
 infra/.terraform.lock.hcl
+infra/*.tfvars
 
 # IDEs
 .vscode/

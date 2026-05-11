@@ -4,7 +4,12 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-22.04-amd64-server-*"]
+    values = ["ubuntu/images/*/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
   }
 }
 
@@ -15,7 +20,7 @@ resource "aws_key_pair" "deployer" {
 
 resource "aws_instance" "backend" {
   ami                    = data.aws_ami.ubuntu.id
-  instance_type          = "t2.micro"
+  instance_type          = "t3.micro"
   subnet_id              = aws_subnet.public_a.id
   vpc_security_group_ids = [aws_security_group.ec2.id]
   key_name               = aws_key_pair.deployer.key_name
