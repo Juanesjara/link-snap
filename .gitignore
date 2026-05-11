@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+*.db
+
+# Node / React
+node_modules/
+dist/
+.env.local
+
+# Env files (nunca subir secretos)
+.env
+*.env
+
+# Terraform
+infra/.terraform/
+infra/*.tfstate
+infra/*.tfstate.backup
+infra/.terraform.lock.hcl
+
+# IDEs
+.vscode/
+.idea/
+*.DS_Store
