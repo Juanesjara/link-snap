@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createLink, deleteLink, getLinks, type LinkResponse } from "../services/links";
 
@@ -10,18 +10,18 @@ export default function Dashboard() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchLinks();
-  }, []);
-
-  async function fetchLinks() {
+  const fetchLinks = useCallback(async () => {
     try {
       const data = await getLinks();
       setLinks(data);
     } catch {
       navigate("/login");
     }
-  }
+  }, [navigate]);
+
+  useEffect(() => {
+    fetchLinks();
+  }, [fetchLinks]);
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
