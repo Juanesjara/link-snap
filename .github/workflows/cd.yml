@@ -1,0 +1,84 @@
+name: CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-backend:
+    name: Deploy backend a EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy en EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            if [ ! -d "/app/link-snap" ]; then
+              git clone https://github.com/${{ github.repository }} /app/link-snap
+            fi
+
+            cd /app/link-snap
+            git pull origin main
+
+            cat > /app/.env << 'ENVEOF'
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            SECRET_KEY=${{ secrets.SECRET_KEY }}
+            ENVIRONMENT=production
+            BASE_URL=http://${{ secrets.EC2_HOST }}:8000
+            ENVEOF
+
+            docker stop linksnap-backend || true
+            docker rm linksnap-backend || true
+
+            docker build -t linksnap-backend ./backend
+
+            docker run -d \
+              --name linksnap-backend \
+              --restart unless-stopped \
+              --env-file /app/.env \
+              -p 8000:8000 \
+              linksnap-backend
+
+  deploy-frontend:
+    name: Deploy frontend a S3 + CloudFront
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+        working-directory: frontend
+
+      - name: Build
+        run: npm run build
+        working-directory: frontend
+        env:
+          VITE_API_URL: http://${{ secrets.EC2_HOST }}:8000
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Subir a S3
+        run: aws s3 sync frontend/dist s3://linksnap-frontend-599682468486 --delete
+
+      - name: Invalidar caché CloudFront
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"
