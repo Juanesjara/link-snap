@@ -13,3 +13,8 @@ output "cloudfront_url" {
   description = "URL del frontend en CloudFront"
   value       = "https://${aws_cloudfront_distribution.frontend.domain_name}"
 }
+
+output "api_url" {
+  description = "URL HTTPS del backend vía CloudFront"
+  value       = "https://${aws_cloudfront_distribution.api.domain_name}"
+}
