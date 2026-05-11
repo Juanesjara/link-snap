@@ -30,7 +30,8 @@ jobs:
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             SECRET_KEY=${{ secrets.SECRET_KEY }}
             ENVIRONMENT=production
-            BASE_URL=http://${{ secrets.EC2_HOST }}:8000
+            BASE_URL=${{ secrets.API_URL }}
+            CORS_ORIGINS=${{ secrets.FRONTEND_URL }}
             ENVEOF
 
             docker stop linksnap-backend || true
@@ -66,7 +67,7 @@ jobs:
         run: npm run build
         working-directory: frontend
         env:
-          VITE_API_URL: http://${{ secrets.EC2_HOST }}:8000
+          VITE_API_URL: ${{ secrets.API_URL }}
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:

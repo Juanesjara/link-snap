@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     database_url: str = "sqlite+aiosqlite:///./linksnap.db"
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 60
+    cors_origins: str = "http://localhost:5173"
 
     model_config = {"env_file": ".env"}
 
