@@ -19,14 +19,14 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            if [ ! -d "/app/link-snap" ]; then
-              git clone https://github.com/${{ github.repository }} /app/link-snap
+            if [ ! -d "/home/ubuntu/link-snap" ]; then
+              git clone https://github.com/${{ github.repository }} /home/ubuntu/link-snap
             fi
 
-            cd /app/link-snap
+            cd /home/ubuntu/link-snap
             git pull origin main
 
-            cat > /app/.env << 'ENVEOF'
+            cat > /home/ubuntu/.env << 'ENVEOF'
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             SECRET_KEY=${{ secrets.SECRET_KEY }}
             ENVIRONMENT=production
@@ -41,7 +41,7 @@ jobs:
             docker run -d \
               --name linksnap-backend \
               --restart unless-stopped \
-              --env-file /app/.env \
+              --env-file /home/ubuntu/.env \
               -p 8000:8000 \
               linksnap-backend
 
