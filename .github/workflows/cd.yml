@@ -34,8 +34,7 @@ jobs:
             CORS_ORIGINS=${{ secrets.FRONTEND_URL }}
             ENVEOF
 
-            docker stop linksnap-backend || true
-            docker rm linksnap-backend || true
+            docker rm -f linksnap-backend || true
 
             docker build -t linksnap-backend ./backend
 
