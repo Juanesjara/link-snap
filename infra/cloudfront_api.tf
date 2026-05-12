@@ -21,12 +21,21 @@ resource "aws_cloudfront_distribution" "api" {
 
     forwarded_values {
       query_string = true
-      headers      = ["Authorization", "Content-Type", "Origin"]
+      headers = [
+        "Authorization",
+        "Content-Type",
+        "Origin",
+        "Access-Control-Request-Headers",
+        "Access-Control-Request-Method",
+        "User-Agent",
+        "Referer",
+      ]
       cookies { forward = "none" }
-    }
+    } 
 
     min_ttl     = 0
     default_ttl = 0
+    
     max_ttl     = 0
   }
 
