@@ -47,7 +47,8 @@ jobs:
 
             echo "Waiting for backend to start..."
             sleep 10
-            curl --fail --retry 8 --retry-delay 3 --retry-all-errors http://localhost:8000/health
+            curl --fail --retry 8 --retry-delay 3 --retry-all-errors http://localhost:8000/health || \
+              (echo "=== CONTAINER LOGS ===" && docker logs linksnap-backend && exit 1)
 
   deploy-frontend:
     name: Deploy frontend a S3 + CloudFront
