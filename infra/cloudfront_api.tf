@@ -35,7 +35,6 @@ resource "aws_cloudfront_distribution" "api" {
 
     min_ttl     = 0
     default_ttl = 0
-    
     max_ttl     = 0
   }
 
