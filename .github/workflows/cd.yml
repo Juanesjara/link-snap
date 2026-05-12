@@ -46,8 +46,8 @@ jobs:
               linksnap-backend
 
             echo "Waiting for backend to start..."
-            sleep 5
-            curl --fail --retry 5 --retry-delay 3 http://localhost:8000/health
+            sleep 10
+            curl --fail --retry 8 --retry-delay 3 --retry-all-errors http://localhost:8000/health
 
   deploy-frontend:
     name: Deploy frontend a S3 + CloudFront
